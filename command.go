@@ -20,4 +20,7 @@ package nntp
 type Command struct {
 	// Keyword specifies the type of command.
 	Keyword string
+
+	// Args are the arguments to the command.
+	Args []string
 }
