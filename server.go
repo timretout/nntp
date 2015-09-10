@@ -43,7 +43,7 @@ type serverHandler struct {
 func (*serverHandler) ServeNNTP(w ResponseWriter, c *Command) {
 	switch c.Keyword {
 	case "HELP":
-		w.WriteHeader(100)
+		w.WriteHeader(StatusHelpText)
 		w.Write([]byte("HELP - print this help"))
 		return
 	}
