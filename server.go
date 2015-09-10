@@ -15,6 +15,24 @@
 
 package nntp
 
-// A Server represents an nntp server
+type Handler interface {
+	ServeNNTP(ResponseWriter, *Command)
+}
+
+// A ResponseWriter interface is used by an NNTP handler to
+// construct an NNTP response.
+type ResponseWriter interface {
+	// Write writes the data to the connection as part of an NNTP
+	// reply.  If WriteHeader has not yet been called, Write calls
+	// WriteHeader(nntp.StatusOK) before writing the data.
+	Write([]byte) (int, error)
+
+	// WriteHeader sends an NNTP response header with status code.
+	// If WriteHeader is not called explicitly, the first call to Write
+	// will trigger an implicit WriteHeader(nntp.StatusInternalFault).
+	WriteHeader(int)
+}
+
+// A Server represents an NNTP server.
 type Server struct {
 }
