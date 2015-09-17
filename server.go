@@ -17,6 +17,8 @@
 
 package nntp
 
+// A Handler can be registered to serve a particular group hierarchy
+// in the NNTP server.
 type Handler interface {
 	ServeNNTP(ResponseWriter, *Command)
 }
