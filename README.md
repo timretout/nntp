@@ -4,3 +4,9 @@ Work in progress - this code doesn't work yet.
 
 This repo contains more of a thought experiment about
 a good interface for a Golang NNTP package.
+
+Install via go get:
+
+```
+go get github.com/diocles/nntp
+```
