@@ -17,30 +17,26 @@ package nntp
 
 import (
 	"bufio"
-	"net/textproto"
 	"strings"
+	"testing"
 )
 
-// A Command represents an NNTP command received by a server or issued
-// by a client.
-type Command struct {
-	// Keyword specifies the type of command.
-	Keyword string
-}
-
-// ReadCommand reads and parses an incoming command from b.
-func ReadCommand(b *bufio.Reader) (com *Command, err error) {
-	tp := textproto.NewReader(b)
-	com = new(Command)
-
-	// Get first line: Keyword Arg1 Arg2...
-	var s string
-	if s, err = tp.ReadLine(); err != nil {
-		return nil, err
+func TestReadCommand(t *testing.T) {
+	var readCommandTests = []struct {
+		in  string
+		com Command
+		err error
+	}{
+		{"HELP\r\n", Command{Keyword: "HELP"}, nil},
 	}
 
-	parts := strings.Split(s, " ")
-	com.Keyword = parts[0]
-
-	return com, nil
+	for i, tt := range readCommandTests {
+		com, err := ReadCommand(bufio.NewReader(strings.NewReader(tt.in)))
+		if err != tt.err {
+			t.Errorf("%d. got error %v, expected nil", i, err)
+		}
+		if *com != tt.com {
+			t.Errorf("%d. got command %v, expected %v", i, com, tt.com)
+		}
+	}
 }
