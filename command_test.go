@@ -28,6 +28,7 @@ func TestReadCommand(t *testing.T) {
 		err error
 	}{
 		{"HELP\r\n", Command{Keyword: "HELP"}, nil},
+		{"help\r\n", Command{Keyword: "HELP"}, nil},
 	}
 
 	for i, tt := range readCommandTests {

@@ -40,7 +40,7 @@ func ReadCommand(b *bufio.Reader) (com *Command, err error) {
 	}
 
 	parts := strings.Split(s, " ")
-	com.Keyword = parts[0]
+	com.Keyword = strings.ToUpper(parts[0])
 
 	return com, nil
 }
