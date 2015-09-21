@@ -17,6 +17,7 @@ package nntp
 
 import (
 	"bufio"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -27,8 +28,18 @@ func TestReadCommand(t *testing.T) {
 		com Command
 		err error
 	}{
-		{"HELP\r\n", Command{Keyword: "HELP"}, nil},
-		{"help\r\n", Command{Keyword: "HELP"}, nil},
+		{"HELP\r\n", Command{Keyword: "HELP", Args: []string{}}, nil},
+		{"help\r\n", Command{Keyword: "HELP", Args: []string{}}, nil},
+		{ // treat keyword variants as arguments for now
+			"LIST OVERVIEW.FMT\r\n",
+			Command{Keyword: "LIST", Args: []string{"OVERVIEW.FMT"}},
+			nil,
+		},
+		{ // separated by one or more space or TAB characters
+			"NEWNEWS\tnews.*,sci.*  19990624   000000 \tGMT",
+			Command{Keyword: "NEWNEWS", Args: []string{"news.*,sci.*", "19990624", "000000", "GMT"}},
+			nil,
+		},
 	}
 
 	for i, tt := range readCommandTests {
@@ -36,8 +47,11 @@ func TestReadCommand(t *testing.T) {
 		if err != tt.err {
 			t.Errorf("%d. got error %v, expected nil", i, err)
 		}
-		if *com != tt.com {
-			t.Errorf("%d. got command %v, expected %v", i, com, tt.com)
+		if com.Keyword != tt.com.Keyword {
+			t.Errorf("%d. got command %v, expected %v", i, com.Keyword, tt.com.Keyword)
+		}
+		if !reflect.DeepEqual(com.Args, tt.com.Args) {
+			t.Errorf("%d. got args %v, expected %v", i, com.Args, tt.com.Args)
 		}
 	}
 }

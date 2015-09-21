@@ -18,6 +18,7 @@ package nntp
 import (
 	"bufio"
 	"net/textproto"
+	"regexp"
 	"strings"
 )
 
@@ -26,7 +27,12 @@ import (
 type Command struct {
 	// Keyword specifies the type of command.
 	Keyword string
+
+	// Args are the arguments to the command.
+	Args []string
 }
+
+var spacesOrTabs = regexp.MustCompile("[ \t]+")
 
 // ReadCommand reads and parses an incoming command from b.
 func ReadCommand(b *bufio.Reader) (com *Command, err error) {
@@ -39,8 +45,9 @@ func ReadCommand(b *bufio.Reader) (com *Command, err error) {
 		return nil, err
 	}
 
-	parts := strings.Split(s, " ")
+	parts := spacesOrTabs.Split(s, -1)
 	com.Keyword = strings.ToUpper(parts[0])
+	com.Args = parts[1:]
 
 	return com, nil
 }
